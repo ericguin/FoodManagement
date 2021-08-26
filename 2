@@ -1,0 +1,14 @@
+#pragma once
+#include "nlohmann/json.hpp"
+
+namespace Food
+{
+    class Database
+    {
+    public:
+        Database();
+        ~Database();
+    private:
+        nlohmann::json db;
+    };
+}
