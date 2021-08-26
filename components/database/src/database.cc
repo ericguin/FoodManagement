@@ -4,9 +4,17 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 namespace Food
 {
+    std::string StringToUppercase(std::string& in)
+    {
+        std::string upper = in;
+        std::transform(in.begin(), in.end(), upper.begin(), ::toupper);
+        return upper;
+    }
+    
     Database::FileSource::FileSource(std::string FileName)
         : fileName(FileName) { }
 
@@ -52,7 +60,7 @@ namespace Food
         if (!db.contains("largest_id"))
         {
             db["largest_id"] = 1;
-            db["items"] = nlohmann::json::array();
+            db["items"] = nlohmann::json::object();
         }
 
         return true;
@@ -94,17 +102,9 @@ namespace Food
     
     bool Database::addOrUpdateItem(Database::Item& item)
     {
-        for (auto& val : db["items"].items())
-        {
-            if (val.value()["Id"] == item.Id)
-            {
-                val.value() = item;
-                return true;
-            }
-        }
-        
-        db["items"].push_back(item);
-        
+        std::string upper_name = item.upperName();
+        db["items"][upper_name] = item;
+
         return false;
     }
     
@@ -117,18 +117,15 @@ namespace Food
     Database::ItemRef Database::FindItem(std::string name)
     {
         ItemRef ret;
+        std::string upper = StringToUppercase(name);
         
         ret.onExpire = [this](Database::Item& i) { this->addOrUpdateItem(i); };
-
-        for (auto& val : db["items"].items())
-        {
-            if (val.value()["Name"] == name)
-            {
-                ret = val.value().get<Database::Item>();
-                break;
-            }
-        }
         
+        if (db["items"].contains(upper))
+        {
+            ret = db["items"][upper].get<Database::Item>();
+        }
+
         return ret;
     }
     

@@ -7,6 +7,8 @@
 
 namespace Food
 {
+    std::string StringToUppercase(std::string& in);
+
     class Database
     {
     public:
@@ -56,6 +58,7 @@ namespace Food
         protected:
             friend class Database;
             unsigned long long Id{0};
+            std::string upperName() { return StringToUppercase(Name); }
         };
         
         class ItemRef : public std::shared_ptr<Item>
