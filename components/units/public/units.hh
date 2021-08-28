@@ -9,6 +9,7 @@ namespace Food
     {
         enum class Units : unsigned
         {
+            INVALID_UNITS,
             MASS_GRAMS,
             MASS_LBS,
             VOLUME_CUPS,
@@ -17,11 +18,19 @@ namespace Food
             VOLUME_L,
         };
         
+        struct Value
+        {
+            double Val;
+            Units Unit;
+        };
+        
         double ConvertAllTo(std::string str, Units to);
         std::vector<std::string> SplitUnitString(std::string &str, char split = ';');
         bool CanUnitAGoToUnitB(Units A, Units B);
+        double UnitAToBConversionRate(Units A, Units B);
         Units StringToUnit(std::string &part);
-        std::vector<std::string> NarrowDownToConvertibleUnits(std::vector<std::string> &split, Units to);
-        std::vector<double> AcquireConvertibleUnitsAndConvertToTarget(std::string &str, Units to);
+        double StringToValue(std::string &part);
+        Value ConvertUnitTo(Value& v, Units to);
+        std::vector<Value> NarrowDownToConvertibleUnits(std::vector<std::string> &split, Units to);
     }
 }
