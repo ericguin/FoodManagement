@@ -38,6 +38,18 @@ TEST_GROUP(units)
         
         return true;
     }
+    
+    bool compareVecs(std::vector<V>& a, std::vector<V>& b)
+    {
+        CHECK_TEXT(a.size() == b.size(), "Vector sizes do not match");
+        
+        for (std::size_t i = 0; i < a.size(); i ++)
+        {
+            CHECK_TEXT(a[i].Val == b[i].Val && a[i].Unit == b[i].Unit, "Contents do not match");
+        }
+        
+        return true;
+    }
 };
 
 TEST(units, SplitUnitString)
@@ -81,8 +93,10 @@ TEST(units, StringToUnit)
 TEST(units, NarrowDownConvertibleUnits)
 {
     std::vector<std::string> split{"12 grams", "14 pounds", "3 cups"};
+    std::vector<V> correct{{12, U::MASS_GRAMS}, {14, U::MASS_LBS}};
 
     auto ret = Food::Units::NarrowDownToConvertibleUnits(split, U::MASS_LBS);
+    compareVecs(ret, correct);
 }
 
 TEST(units, ConvertUnitTo)
@@ -95,7 +109,6 @@ TEST(units, ConvertUnitTo)
 TEST(units, WholeHog)
 {
     std::string conglomerateUnits = "12 grams;14 pounds;";
-
-    std::cout << Food::Units::ConvertAllTo(conglomerateUnits, U::MASS_LBS) << std::endl;
-    std::cout << Food::Units::ConvertAllTo(conglomerateUnits, U::VOLUME_CUPS) << std::endl;
+    double supposed = 14.0265;
+    DOUBLES_EQUAL(supposed, Food::Units::ConvertAllTo(conglomerateUnits, U::MASS_LBS), 0.0001);
 }
