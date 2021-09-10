@@ -1,5 +1,6 @@
 #pragma once
 #include "nlohmann/json.hpp"
+#include <cstring>
 #include <string>
 #include <vector>
 #include <memory>
@@ -34,33 +35,72 @@ namespace Food
 
         Database(Source& Source);
         ~Database();
+
+        class Batch
+        {
+        public:
+            Batch() {}
+            Batch(std::string quantity, std::string purchaseDate)
+                : Quantity(quantity), PurchaseDate(purchaseDate) {}
+
+            std::string Quantity;
+            std::string PurchaseDate;
+
+        };
+
+        friend void to_json(nlohmann::json& j, const Batch& b)
+        {
+            j = nlohmann::json{
+                {"Quantity", b.Quantity},
+                {"PurchaseDate", b.PurchaseDate}
+            };
+        }
+
+        friend void from_json(const nlohmann::json& j, Batch& b)
+        {
+            j.at("Quantity").get_to(b.Quantity);
+            j.at("PurchaseDate").get_to(b.PurchaseDate);
+        }
         
         class Item
         {
         public:
-            Item() {};
+            Item() {}
             Item(std::string n, std::string b, std::string q)
-                : Name(n), Barcode(b), Quantity(q) {}
+                : Name(n), Quantity(q) {}
             
             Item& operator=(const Item& rhs)
             {
                 Name = rhs.Name;
-                Barcode = rhs.Barcode;
                 Quantity = rhs.Quantity;
-                Id = rhs.Id;
+                Batches = rhs.Batches;
                 return *this;
             }
 
             std::string Name{};
-            std::string Barcode{};
             std::string Quantity{};
-            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Item, Id, Name, Barcode, Quantity);
+            std::vector<Batch> Batches{};
         protected:
             friend class Database;
-            unsigned long long Id{0};
             std::string upperName() { return StringToUppercase(Name); }
         };
+
+        friend void to_json(nlohmann::json& j, const Item& i)
+        {
+            j = nlohmann::json{
+                {"Name", i.Name},
+                {"Quantity", i.Quantity},
+                {"Batch", i.Batches}
+            };
+        }
         
+        friend void from_json(const nlohmann::json& j, Item& i)
+        {
+            j.at("Name").get_to(i.Name);
+            j.at("Quantity").get_to(i.Quantity);
+            j.at("Batches").get_to(i.Batches);
+        }
+
         class ItemRef : public std::shared_ptr<Item>
         {
         public:
@@ -94,7 +134,6 @@ namespace Food
 
     private:
         bool initDb();
-        unsigned long long assignId(Item& item);
         bool addOrUpdateItem(Item& item);
 
         nlohmann::json db;

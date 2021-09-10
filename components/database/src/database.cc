@@ -82,22 +82,9 @@ namespace Food
     
     bool Database::UpdateItem(Database::Item& item)
     {
-        assignId(item);
-
         addOrUpdateItem(item);
 
         return true;
-    }
-    
-    unsigned long long Database::assignId(Database::Item& item)
-    {
-        if (item.Id == 0)
-        {
-            item.Id = db["largest_id"].get<unsigned long long>();
-            db["largest_id"] = db["largest_id"].get<unsigned long long>() + 1;
-        }
-
-        return db["largest_id"].get<unsigned long long>();
     }
     
     bool Database::addOrUpdateItem(Database::Item& item)

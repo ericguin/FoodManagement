@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.20)
 
 project(FoodManagement VERSION 0.0.1)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 add_executable(FoodManagement main.cc)
 add_executable(FoodManagementTests test.cc)
 
