@@ -57,9 +57,8 @@ namespace Food
     
     bool Database::initDb()
     {
-        if (!db.contains("largest_id"))
+        if (!db.contains("items"))
         {
-            db["largest_id"] = 1;
             db["items"] = nlohmann::json::object();
         }
 

@@ -66,19 +66,17 @@ namespace Food
         {
         public:
             Item() {}
-            Item(std::string n, std::string b, std::string q)
-                : Name(n), Quantity(q) {}
+            Item(std::string n)
+                : Name(n) {}
             
             Item& operator=(const Item& rhs)
             {
                 Name = rhs.Name;
-                Quantity = rhs.Quantity;
                 Batches = rhs.Batches;
                 return *this;
             }
 
             std::string Name{};
-            std::string Quantity{};
             std::vector<Batch> Batches{};
         protected:
             friend class Database;
@@ -89,15 +87,13 @@ namespace Food
         {
             j = nlohmann::json{
                 {"Name", i.Name},
-                {"Quantity", i.Quantity},
-                {"Batch", i.Batches}
+                {"Batches", i.Batches}
             };
         }
         
         friend void from_json(const nlohmann::json& j, Item& i)
         {
             j.at("Name").get_to(i.Name);
-            j.at("Quantity").get_to(i.Quantity);
             j.at("Batches").get_to(i.Batches);
         }
 
