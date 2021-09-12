@@ -1,27 +1,19 @@
-#include <iostream>
-#include "database.hh"
-#include "units.hh"
+#include "ui.hh"
+
+#include <QApplication>
+#include <QQuickItem>
+#include <QQmlContext>
+#include <QQmlApplicationEngine>
 
 int main(int argc, char** argv)
 {
-    Food::Database::FileSource dbFile{"food.json"};
-    Food::Database yes{dbFile};
+    ApplicationContext ctxt{};
+
+    QApplication app(argc, argv);
+    QQmlApplicationEngine engine;
+    engine.load("qrc:///main.qml");
     
-    Food::Database::Item whee {
-        "Grapes"
-    };
+    engine.rootContext()->setContextProperty("App", &ctxt);
 
-    whee.Batches.push_back({
-        "yeah", "yesterday"
-    });
-
-    yes.UpdateItem(whee);
-
-    {
-        Food::Database::ItemRef item = yes.FindItem("Grapes");
-
-        item->Batches[0].Quantity = "less than it was before";
-    }
-
-    yes.Save(dbFile);
+    return app.exec();
 }
