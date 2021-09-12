@@ -1,6 +1,8 @@
 #pragma once
 
 #include <QObject>
+#include <QFile>
+#include "database.hh"
 
 class ApplicationContext : public QObject
 {
@@ -11,4 +13,9 @@ public:
     
 public slots:
     void LoadDatabase(const QString& fpath);
+};
+
+class QFileSource : public Food::Database::Source
+{
+    
 };
