@@ -1,6 +1,8 @@
 #include "ui.hh"
 
 #include <QDebug>
+#include <QUrl>
+#include <QDir>
 #include <iostream>
 
 ApplicationContext::ApplicationContext()
@@ -10,8 +12,9 @@ ApplicationContext::ApplicationContext()
 
 void ApplicationContext::LoadDatabase(const QString& fpath)
 {
-    qDebug() << "I'm getting something: " << fpath;
-    std::cout << "Yeeted: " << fpath.toStdString() << std::endl;
+    qDebug() << "Loading database: " << fpath;
+    QFileSource s(fpath);
+    db.Load(s);
 }
 
 QString ApplicationContext::userName()
@@ -28,4 +31,40 @@ void ApplicationContext::setUserName(const QString &userName)
 
     m_userName = userName;
     emit userNameChanged();
+}
+
+QFileSource::QFileSource(QString path)
+{
+    QUrl url(path);
+    if (url.isLocalFile())
+    {
+        f.setFileName(QDir::toNativeSeparators(url.toLocalFile()));
+    }
+}
+
+std::string QFileSource::Read()
+{
+    std::string ret = "";
+
+    if (f.exists() && f.open(QFile::ReadOnly | QFile::Text))
+    {
+        QTextStream in(&f);
+        ret = in.readAll().toStdString();
+        f.close();
+    }
+    
+    return ret;
+}
+
+bool QFileSource::Write(std::string& contents)
+{
+    if (f.exists() && f.open(QFile::WriteOnly | QFile::Text))
+    {
+        QTextStream out(&f);
+        out << QString::fromStdString(contents);
+        f.close();
+        return true;
+    }
+    
+    return false;
 }

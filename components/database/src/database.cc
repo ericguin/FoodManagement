@@ -48,11 +48,8 @@ namespace Food
         return false;
     }
 
-    Database::Database(Source& Source)
+    Database::Database()
     {
-        std::string s = Source.Read();
-        db = nlohmann::json::parse(s);
-        initDb();
     }
     
     bool Database::initDb()
@@ -98,6 +95,20 @@ namespace Food
     {
         std::string json = db.dump();
         return Source.Write(json);
+    }
+    
+    bool Database::Load(Database::Source& Source)
+    {
+        std::string s = Source.Read();
+        
+        if (s != "")
+        {
+            db = nlohmann::json::parse(s);
+            initDb();
+            return true;
+        }
+
+        return false;
     }
     
     Database::ItemRef Database::FindItem(std::string name)

@@ -33,7 +33,7 @@ namespace Food
             std::string fileName;
         };
 
-        Database(Source& Source);
+        Database();
         ~Database();
 
         class Batch
@@ -127,6 +127,7 @@ namespace Food
 
         bool UpdateItem(Item& item);
         bool Save(Source& Source);
+        bool Load(Source& Source);
 
     private:
         bool initDb();

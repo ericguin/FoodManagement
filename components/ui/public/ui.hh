@@ -4,6 +4,8 @@
 #include <QFile>
 #include "database.hh"
 
+#include <memory>
+
 class ApplicationContext : public QObject
 {
     Q_OBJECT
@@ -23,9 +25,16 @@ signals:
 
 private:
     QString m_userName;
+    Food::Database db;
 };
 
 class QFileSource : public Food::Database::Source
 {
-    
+public:
+    QFileSource(QString path);
+    ~QFileSource() override = default;
+    std::string Read() override;
+    bool Write(std::string&) override;
+private:
+    QFile f;
 };
