@@ -17,11 +17,12 @@ ApplicationWindow {
         anchors.fill: parent
         
         Tab {
-            title: "Welcome"
-            active: true
-            Label {
-                id: sup
-                text: "Sup"
+            TextField {
+                text: App.userName
+                placeholderText: qsTr("User name")
+                anchors.centerIn: parent
+
+                onEditingFinished: App.userName = text
             }
         }
         

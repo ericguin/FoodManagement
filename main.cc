@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QQuickItem>
 #include <QQmlContext>
+#include <QVariant>
 #include <QQmlApplicationEngine>
 
 int main(int argc, char** argv)
@@ -11,9 +12,14 @@ int main(int argc, char** argv)
 
     QApplication app(argc, argv);
     QQmlApplicationEngine engine;
+    
+    // engine.setInitialProperties({
+    //     { "App", QVariant::fromValue(&ctxt) }
+    // });
+
+    engine.rootContext()->setContextProperty("App", &ctxt);
     engine.load("qrc:///main.qml");
     
-    engine.rootContext()->setContextProperty("App", &ctxt);
 
     return app.exec();
 }
